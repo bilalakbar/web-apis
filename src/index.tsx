@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import App from "./components/root/App";
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Barcode from "./components/barcode/Barcode";
 
 const container = document.getElementById("root");
@@ -12,14 +12,14 @@ const root = createRoot(container!);
 root.render(
   <React.StrictMode>
     <ChakraProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="barcode" element={<Barcode />} />
           <Route path="battery" element={<App />} />
           <Route path="background" element={<App />} />
           <Route path="/" element={<App />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </ChakraProvider>
   </React.StrictMode>
 );

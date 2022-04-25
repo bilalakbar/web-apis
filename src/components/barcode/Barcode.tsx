@@ -24,13 +24,9 @@ function Barcode() {
   const [result, setResult] = React.useState<Array<any>>([]);
 
   const reader = useMemo(() => new FileReader(), []);
-  const barCodeDetector = useMemo(() => {
-    if (isSupported && supportedFormats.length > 0)
-      return new window.BarcodeDetector({ formats: supportedFormats });
-  }, [supportedFormats, isSupported]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) return;
+    if (!event.target.value || !event.target.files) return;
     const file = event.target.files[0];
     setImage(event.target.value);
     reader.readAsDataURL(file);
@@ -49,18 +45,29 @@ function Barcode() {
 
   useEffect(() => {
     const eventHandler = () => setPreview(reader.result as string);
-    reader.addEventListener("load", eventHandler, false);
-    return () => reader.removeEventListener("load", eventHandler);
+    reader.addEventListener("loadend", eventHandler, false);
+    return () => reader.removeEventListener("loadend", eventHandler);
   }, [reader]);
 
   useEffect(() => {
-    if (!barCodeDetector || !preview) return;
-    const imageEl = window.document.getElementById("Image__Preview");
+    if (supportedFormats.length === 0 || !preview) return;
+    const imageEl = window.document.getElementById(
+      "Image__Preview"
+    ) as HTMLImageElement | null;
+
+    if (imageEl === null) return;
+
+    const barCodeDetector = new window.BarcodeDetector({
+      formats: supportedFormats,
+    });
     barCodeDetector
       .detect(imageEl)
-      .then((barcodes: React.SetStateAction<any[]>) => setResult(barcodes))
-      .catch((e: any) => console.log("Error", e));
-  }, [preview, barCodeDetector]);
+      .then((barcodes: any[]) => setResult(barcodes))
+      .catch((e: any) => {
+        setResult([]);
+        console.log("Error", e);
+      });
+  }, [preview, supportedFormats]);
 
   return (
     <Template>
@@ -127,7 +134,7 @@ function Barcode() {
                   <Heading as="h3">Detected Barcode</Heading>
                 </Box>
                 {result.map((res, k) => (
-                  <Box textAlign="center" key={k}>
+                  <Box textAlign="center" key={`${image}-${k}`}>
                     <Stat>
                       {res.format && <StatLabel>{res.format}</StatLabel>}
                       {res.rawValue && <StatNumber>{res.rawValue}</StatNumber>}

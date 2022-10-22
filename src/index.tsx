@@ -5,6 +5,7 @@ import App from "./components/root/App";
 import reportWebVitals from "./reportWebVitals";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import Barcode from "./components/barcode/Barcode";
+import Battery from "./components/battery/Battery";
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
@@ -15,7 +16,7 @@ root.render(
       <HashRouter>
         <Routes>
           <Route path="barcode" element={<Barcode />} />
-          <Route path="battery" element={<App />} />
+          <Route path="battery" element={<Battery />} />
           <Route path="background" element={<App />} />
           <Route path="/" element={<App />} />
         </Routes>
